@@ -251,6 +251,20 @@ body::after{
     backdrop-filter:blur(30px);z-index:200;display:flex;align-items:center;padding:0 20px;gap:16px;
     transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;
 }
+/* Expand button — visible only on mobile, tapping opens NP modal */
+.player-expand-btn{
+    display:none;
+    position:absolute;top:6px;left:50%;transform:translateX(-50%);
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;color:rgba(255,255,255,.7);
+    font-size:.7rem;padding:3px 14px 3px 10px;gap:5px;
+    cursor:pointer;align-items:center;
+    font-family:var(--font-main);letter-spacing:.05em;
+    transition:all .2s;white-space:nowrap;
+    z-index:10;
+}
+.player-expand-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
+.player-expand-btn i{font-size:.65rem;}
 .player-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--grad-glow);opacity:.2}
 .player-bar.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
 .player-bar.visible{transform:translateY(0);opacity:1}
@@ -322,17 +336,13 @@ body::after{
 
 /* =====================
    NOW PLAYING — FULL SCREEN MODAL
-   Card style like Spotify / photo 6:
-   - Blurred cover fills the whole background
-   - White card floats in the center with cover, title, controls
-   - Swipe left → lyrics page
-   - Swipe down → close
+   Inspired by Sylva: white card, big cover, clean controls
    ===================== */
 .np-modal{
     position:fixed;inset:0;z-index:500;
     display:none;flex-direction:column;
+    /* Background: dynamic color from cover + blur */
     overflow:hidden;
-    background:transparent;
 }
 .np-modal.open{display:flex}
 
@@ -495,6 +505,8 @@ body::after{
     .mobile-nav{display:flex}
     .main-content{padding:20px 16px}
     .player-right{display:none}
+    .player-bar{padding-top:26px;}
+    .player-expand-btn{display:flex;}
     .song-grid{grid-template-columns:repeat(2,1fr);gap:10px}
     .hero-music-visual{flex-direction:column;gap:20px;padding:24px;text-align:center}
     .hero-big{font-size:1.5rem}
@@ -506,57 +518,4 @@ body::after{
     /* NP modal full screen on mobile */
     .np-swipe-page{padding:0 20px}
     .np-cover-wrap{width:min(260px,72vw)}
-}
-
-/* =====================
-   PLAYER BAR — Top bar with pill + expand button
-   ===================== */
-.player-topbar {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 16px 0;
-    gap: 10px;
-    pointer-events: none;
-}
-.player-swipe-pill {
-    width: 36px; height: 4px;
-    background: rgba(255,255,255,0.18);
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-.player-expand-btn {
-    display: none; /* hidden on desktop */
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-    color: rgba(255,255,255,0.6);
-    font-family: var(--font-main);
-    font-size: .65rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    cursor: pointer;
-    pointer-events: all;
-    transition: all .2s;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-}
-.player-expand-btn:hover {
-    background: rgba(255,255,255,0.14);
-    color: #fff;
-}
-.player-expand-btn i { font-size: .6rem; }
-
-/* =====================
-   MOBILE: show expand button + hide right controls
-   ===================== */
-@media (max-width: 768px) {
-    .player-topbar { pointer-events: all; }
-    .player-expand-btn { display: flex; }
-    .player-right { display: none; }
-    .player-bar { padding-top: 22px; }
 }

@@ -180,13 +180,10 @@
 
     <!-- PLAYER BAR (hidden by default) -->
     <div class="player-bar hidden" id="playerBar">
-        <!-- Top area: swipe pill + expand arrow -->
-        <div class="player-topbar">
-            <div class="player-swipe-pill"></div>
-            <button class="player-expand-btn" onclick="openNowPlaying()" aria-label="Open Now Playing">
-                <i class="fa-solid fa-chevron-up"></i> <span>Now Playing</span>
-            </button>
-        </div>
+        <!-- Up arrow button: tap to open Now Playing -->
+        <button class="player-expand-btn" onclick="openNowPlaying()" aria-label="Open Now Playing">
+            <i class="fa-solid fa-chevron-up"></i>
+        </button>
         <div class="player-song-info" onclick="openNowPlaying()" style="cursor:pointer;flex:1;min-width:0;display:flex;align-items:center;gap:12px;">
             <div class="player-cover-wrap">
                 <img id="playerCover" src="" alt="" class="player-cover hidden">

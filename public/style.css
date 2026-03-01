@@ -250,24 +250,55 @@ body::after{
     background:var(--bg-player);border-top:1px solid var(--border-subtle);
     backdrop-filter:blur(30px);z-index:200;display:flex;align-items:center;padding:0 20px;gap:16px;
     transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;
+    /* FIX: needs relative for absolute children */
+    position:fixed;
 }
-/* Expand button — visible only on mobile, tapping opens NP modal */
-.player-expand-btn{
-    display:none;
-    position:absolute;top:6px;left:50%;transform:translateX(-50%);
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);
-    border-radius:20px;color:rgba(255,255,255,.7);
-    font-size:.7rem;padding:3px 14px 3px 10px;gap:5px;
-    cursor:pointer;align-items:center;
-    font-family:var(--font-main);letter-spacing:.05em;
-    transition:all .2s;white-space:nowrap;
-    z-index:10;
-}
-.player-expand-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
-.player-expand-btn i{font-size:.65rem;}
-.player-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--grad-glow);opacity:.2}
+.player-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--grad-glow);opacity:.2;pointer-events:none;z-index:0;}
 .player-bar.hidden{transform:translateY(100%);opacity:0;pointer-events:none}
 .player-bar.visible{transform:translateY(0);opacity:1}
+
+/* =====================
+   EXPAND BUTTON (arrow up)
+   Position: outside the flex flow, absolute on top center
+   z-index must beat ::before (which is z-index:0)
+   ===================== */
+.player-expand-btn{
+    /* Hidden on desktop */
+    display:none;
+    /* Positioned above the player bar content */
+    position:absolute;
+    top:-18px;          /* Sits ABOVE the player bar top edge */
+    left:50%;
+    transform:translateX(-50%);
+    /* Style */
+    background:rgba(10,20,40,0.92);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:20px;
+    color:rgba(255,255,255,0.85);
+    font-size:.72rem;
+    font-weight:600;
+    padding:4px 16px;
+    gap:6px;
+    cursor:pointer;
+    align-items:center;
+    font-family:var(--font-main);
+    letter-spacing:.04em;
+    backdrop-filter:blur(12px);
+    box-shadow:0 -4px 16px rgba(0,0,0,0.5);
+    transition:all .2s;
+    white-space:nowrap;
+    /* FIX: z-index high enough to be tappable */
+    z-index:999;
+    /* Must not be pointer-events:none */
+    pointer-events:all;
+}
+.player-expand-btn:active{
+    background:rgba(59,130,246,0.3);
+    border-color:var(--blue-400);
+    color:#fff;
+    transform:translateX(-50%) scale(0.96);
+}
+.player-expand-btn i{font-size:.62rem;}
 
 .player-song-info{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
 .player-cover-wrap{width:52px;height:52px;flex-shrink:0}
@@ -500,12 +531,12 @@ body::after{
 }
 
 @media(max-width:768px){
-    :root{--sidebar-w:0px;--player-h:96px}
+    :root{--sidebar-w:0px;--player-h:88px}
     .sidebar{display:none}
     .mobile-nav{display:flex}
     .main-content{padding:20px 16px}
     .player-right{display:none}
-    .player-bar{padding-top:26px;}
+    .player-bar{padding-top:0;overflow:visible;}
     .player-expand-btn{display:flex;}
     .song-grid{grid-template-columns:repeat(2,1fr);gap:10px}
     .hero-music-visual{flex-direction:column;gap:20px;padding:24px;text-align:center}
@@ -518,4 +549,20 @@ body::after{
     /* NP modal full screen on mobile */
     .np-swipe-page{padding:0 20px}
     .np-cover-wrap{width:min(260px,72vw)}
+}
+
+/* =====================
+   PLAYER BAR — Swipe dismiss visual hint
+   Shows subtle left/right gradient when swiping
+   ===================== */
+.player-bar{overflow:visible !important;}
+
+/* Dismiss hint on swipe */
+.player-bar::after{
+    content:'';
+    position:absolute;inset:0;
+    pointer-events:none;
+    border-radius:0;
+    opacity:0;
+    transition:opacity .2s;
 }

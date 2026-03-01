@@ -1,23 +1,17 @@
 {
   "rewrites": [
-    { "source": "/api/search", "destination": "/api/search" },
+    { "source": "/api/search",   "destination": "/api/search" },
     { "source": "/api/download", "destination": "/api/download" },
-    { "source": "/(.*)", "destination": "/public/$1" }
+    { "source": "/(.*)",         "destination": "/public/$1" }
   ],
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" },
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
-    },
-    {
-      "source": "/public/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        { "key": "Cache-Control",                "value": "no-store" }
       ]
     }
   ]

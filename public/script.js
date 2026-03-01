@@ -121,30 +121,103 @@ function updateNpLikeBtn() {
     btn.querySelector('i').className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
 }
 
-// ---------- SWIPE (clean rewrite) ----------
+// ---------- SWIPE ----------
 function initSwipe() {
-    // ---- Player bar: tap song info area OR tap expand button → open modal ----
-    // The expand button (chevron-up) uses onclick="openNowPlaying()" directly in HTML
-    // Swipe is handled separately with careful conflict avoidance
+    initPlayerBarSwipe();
+    initModalSwipe();
+}
 
+// ---- PLAYER BAR SWIPE ----
+// Swipe LEFT  → remove/dismiss current song (stop & hide player)
+// Swipe RIGHT → same (dismiss)
+// Swipe UP    → open Now Playing modal
+// The expand button uses onclick directly — no JS needed for that
+function initPlayerBarSwipe() {
     const bar = document.getElementById('playerBar');
-    if (bar) {
-        let ty0 = 0, tx0 = 0, onControl = false;
-        bar.addEventListener('touchstart', e => {
-            ty0 = e.touches[0].clientY;
-            tx0 = e.touches[0].clientX;
-            // Check if touch started on a control element (progress bar, buttons)
-            onControl = !!e.target.closest('#progressBar, .ctrl-btn, .play-btn, .like-btn, #volumeBar, .volume-bar-outer');
-        }, { passive: true });
-        bar.addEventListener('touchend', e => {
-            if (onControl) return; // let controls handle their own touch
-            const dy = ty0 - e.changedTouches[0].clientY;
-            const dx = Math.abs(e.changedTouches[0].clientX - tx0);
-            if (dy > 30 && dy > dx) openNowPlaying();
-        }, { passive: true });
-    }
+    if (!bar) return;
 
-    // ---- NP Modal: swipe left→lyrics, right→player, down→close ----
+    let tx0 = 0, ty0 = 0, startEl = null;
+    let animating = false;
+
+    bar.addEventListener('touchstart', e => {
+        tx0 = e.touches[0].clientX;
+        ty0 = e.touches[0].clientY;
+        startEl = e.target;
+        bar.style.transition = 'none'; // disable transition during drag
+    }, { passive: true });
+
+    bar.addEventListener('touchmove', e => {
+        // Only animate horizontal swipe, ignore if on controls
+        if (startEl?.closest('#progressBar,.ctrl-btn,.play-btn,.like-btn,#volumeBar,.volume-bar-outer,.player-expand-btn')) return;
+        const dx = e.touches[0].clientX - tx0;
+        const dy = Math.abs(e.touches[0].clientY - ty0);
+        if (Math.abs(dx) > dy) {
+            // Follow finger horizontally
+            bar.style.transform = `translateX(${dx}px)`;
+            bar.style.opacity   = String(Math.max(0, 1 - Math.abs(dx) / 200));
+        }
+    }, { passive: true });
+
+    bar.addEventListener('touchend', e => {
+        bar.style.transition = ''; // re-enable transition
+        const dx = e.changedTouches[0].clientX - tx0;
+        const dy = ty0 - e.changedTouches[0].clientY;
+        const adx = Math.abs(dx);
+        const ady = Math.abs(dy);
+
+        // Ignore if started on controls
+        if (startEl?.closest('#progressBar,.ctrl-btn,.play-btn,.like-btn,#volumeBar,.volume-bar-outer,.player-expand-btn')) {
+            bar.style.transform = '';
+            bar.style.opacity   = '';
+            return;
+        }
+
+        if (adx > ady && adx > 60) {
+            // Horizontal swipe → dismiss player
+            dismissPlayer(dx > 0 ? 'right' : 'left');
+        } else if (dy > 35 && ady > adx) {
+            // Swipe UP → open modal
+            bar.style.transform = '';
+            bar.style.opacity   = '';
+            openNowPlaying();
+        } else {
+            // Snap back
+            bar.style.transform = '';
+            bar.style.opacity   = '';
+        }
+    }, { passive: true });
+}
+
+function dismissPlayer(direction) {
+    const bar = document.getElementById('playerBar');
+    if (!bar) return;
+    // Animate out
+    bar.style.transition = 'transform .3s ease, opacity .3s ease';
+    bar.style.transform  = `translateX(${direction === 'right' ? '110%' : '-110%'})`;
+    bar.style.opacity    = '0';
+    // Stop audio and hide
+    setTimeout(() => {
+        audio.pause();
+        audio.src = '';
+        isPlaying = false;
+        currentSong = null;
+        bar.classList.add('hidden');
+        bar.classList.remove('visible');
+        bar.style.transform = '';
+        bar.style.opacity   = '';
+        document.getElementById('appLayout')?.classList.add('no-player');
+        document.getElementById('vinylDisc')?.classList.remove('spinning');
+        document.title = 'SoundWave — Music Player';
+        updatePlayBtn();
+    }, 320);
+    toast(direction === 'right' ? '👋 Lagu dihapus' : '👋 Lagu dihapus');
+}
+
+// ---- NP MODAL SWIPE ----
+// Swipe LEFT  → lyrics page
+// Swipe RIGHT → player page
+// Swipe DOWN  → close modal
+function initModalSwipe() {
     const modal = document.getElementById('npModal');
     if (!modal) return;
     let mx0 = 0, my0 = 0;
@@ -156,14 +229,10 @@ function initSwipe() {
         const dx = e.changedTouches[0].clientX - mx0;
         const dy = e.changedTouches[0].clientY - my0;
         if (Math.abs(dy) > Math.abs(dx)) {
-            // Vertical swipe — close on swipe down (player page only)
             if (dy > 60 && npPage === 0) closeNowPlaying();
-        } else {
-            // Horizontal swipe
-            if (Math.abs(dx) > 40) {
-                if (dx < 0) npGoTo(1); // left → lyrics
-                else        npGoTo(0); // right → player
-            }
+        } else if (Math.abs(dx) > 40) {
+            if (dx < 0) npGoTo(1);
+            else        npGoTo(0);
         }
     }, { passive: true });
 }

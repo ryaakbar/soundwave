@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SoundWave — Music Player</title>
+    <meta name="description" content="Cari dan play lagu apapun gratis. Powered by Spotify.">
+    <meta name="theme-color" content="#020817">
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SoundWave">
+    <meta property="og:title" content="SoundWave — Music Player">
+    <meta property="og:description" content="Cari dan play lagu apapun gratis. No login.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="marquee-top">
+        <div class="marquee-content">
+            SOUNDWAVE <span class="marquee-dot">◆</span> MUSIC PLAYER <span class="marquee-dot">◆</span> SEARCH ANY SONG <span class="marquee-dot">◆</span> POWERED BY SPOTIFY <span class="marquee-dot">◆</span> FREE TO USE <span class="marquee-dot">◆</span> NO LOGIN <span class="marquee-dot">◆</span> SOUNDWAVE <span class="marquee-dot">◆</span> MUSIC PLAYER <span class="marquee-dot">◆</span> SEARCH ANY SONG <span class="marquee-dot">◆</span> POWERED BY SPOTIFY <span class="marquee-dot">◆</span>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="brand-container">
+            <div class="brand-icon-wrap"><i class="fa-solid fa-music"></i></div>
+            <div class="brand-name">Sound<span>Wave</span></div>
+        </div>
+        <div class="nav-right">
+            <div class="status-pill"><div class="dot-live"></div>ONLINE</div>
+            <button class="nav-icon-btn" onclick="toggleQueue()" title="Queue (Q)"><i class="fa-solid fa-list-ul"></i></button>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Menu</div>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-item active" id="si-home" onclick="showPage('home')"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                    <a class="sidebar-item" id="si-search" onclick="showPage('search')"><i class="fa-solid fa-magnifying-glass"></i><span>Search</span></a>
+                    <a class="sidebar-item" id="si-library" onclick="showPage('library')"><i class="fa-solid fa-heart"></i><span>Liked Songs</span></a>
+                </nav>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">Recently Played</div>
+                <div id="recentList" class="recent-list"><div class="recent-empty">Belum ada lagu</div></div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content" id="mainContent">
+
+            <!-- HOME -->
+            <div id="page-home" class="page active">
+                <div class="page-header reveal">
+                    <h1 class="page-title">Good <span id="greetTime">Morning</span> 👋</h1>
+                    <p class="page-sub">Cari lagu favorit lo dan nikmatin musiknya</p>
+                </div>
+                <div class="search-hero reveal delay-1">
+                    <div class="search-wrap">
+                        <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                        <input type="text" id="searchInputHome" class="search-input" placeholder="Cari lagu, artis, album..." autocomplete="off">
+                        <button class="search-btn" onclick="doSearch('home')"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                    <div class="suggestions-box hidden" id="suggestionsHome"></div>
+                </div>
+                <div id="homeSkeleton" class="song-grid hidden">
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                </div>
+                <div id="homeResults" class="song-grid hidden"></div>
+                <div id="homeError" class="error-state hidden">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p id="homeErrorText">Gagal mencari lagu</p>
+                    <button onclick="doSearch('home')" class="retry-btn">Coba Lagi</button>
+                </div>
+                <div id="homeHero" class="home-hero reveal delay-2">
+                    <div class="hero-music-visual">
+                        <div class="vinyl-wrap">
+                            <div class="vinyl" id="vinylDisc">
+                                <div class="vinyl-center"></div>
+                                <div class="vinyl-ring r1"></div>
+                                <div class="vinyl-ring r2"></div>
+                                <div class="vinyl-ring r3"></div>
+                            </div>
+                        </div>
+                        <div class="hero-music-info">
+                            <p class="hero-label">🎵 Stream anything</p>
+                            <h2 class="hero-big">Millions of<br><span class="grad-text">Songs.</span></h2>
+                            <p class="hero-desc">Cari lagu apapun, langsung play di browser lo. Gratis, tanpa login.</p>
+                            <div class="hero-shortcuts">
+                                <div class="shortcut-chip"><kbd>Space</kbd> Play/Pause</div>
+                                <div class="shortcut-chip"><kbd>←</kbd><kbd>→</kbd> Seek</div>
+                                <div class="shortcut-chip"><kbd>↑</kbd><kbd>↓</kbd> Volume</div>
+                                <div class="shortcut-chip"><kbd>M</kbd> Mute</div>
+                                <div class="shortcut-chip"><kbd>L</kbd> Like</div>
+                                <div class="shortcut-chip"><kbd>Q</kbd> Queue</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCH -->
+            <div id="page-search" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Search</h1>
+                </div>
+                <div class="search-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                    <input type="text" id="searchInputSearch" class="search-input" placeholder="Nama lagu atau artis..." autocomplete="off">
+                    <button class="search-btn" onclick="doSearch('search')"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="suggestions-box hidden" id="suggestionsSearch"></div>
+                <div id="searchSkeleton" class="song-grid hidden">
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
+                </div>
+                <div id="searchResults" class="song-grid"></div>
+                <div id="searchError" class="error-state hidden">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p id="searchErrorText">Gagal mencari lagu</p>
+                    <button onclick="doSearch('search')" class="retry-btn">Coba Lagi</button>
+                </div>
+            </div>
+
+            <!-- LIBRARY -->
+            <div id="page-library" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">Liked Songs ❤️</h1>
+                    <p class="page-sub" id="likedCount">0 lagu</p>
+                </div>
+                <div id="likedList" class="song-list">
+                    <div class="empty-state">
+                        <i class="fa-regular fa-heart"></i>
+                        <p>Belum ada lagu yang di-like</p>
+                        <span>Tekan ❤️ waktu lagu lagi main</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- QUEUE PANEL -->
+        <aside class="queue-panel hidden" id="queuePanel">
+            <div class="queue-header">
+                <div class="queue-title"><i class="fa-solid fa-list-ul"></i> Queue</div>
+                <button class="queue-close" onclick="toggleQueue()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="queueNowPlaying">
+                <div class="queue-section-label">Now Playing</div>
+                <div class="queue-empty" id="queueNowEmpty">Belum ada lagu</div>
+            </div>
+            <div id="queueNext">
+                <div class="queue-section-label">Next Up</div>
+                <div class="queue-list" id="queueNextList"><div class="queue-empty">Queue kosong</div></div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- PLAYER BAR -->
+    <div class="player-bar" id="playerBar">
+        <div class="player-song-info">
+            <div class="player-cover-wrap">
+                <img id="playerCover" src="" alt="cover" class="player-cover hidden">
+                <div class="player-cover-placeholder" id="coverPlaceholder"><i class="fa-solid fa-music"></i></div>
+            </div>
+            <div class="player-meta">
+                <div class="player-title" id="playerTitle">No song playing</div>
+                <div class="player-artist" id="playerArtist">—</div>
+            </div>
+            <button class="like-btn" id="likeBtn" onclick="toggleLike()" title="Like (L)">
+                <i class="fa-regular fa-heart"></i>
+            </button>
+        </div>
+
+        <div class="player-controls-wrap">
+            <div class="player-controls">
+                <button class="ctrl-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle (S)"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="ctrl-btn" onclick="prevSong()" title="Prev (←)"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="ctrl-btn play-btn" id="playPauseBtn" onclick="togglePlayPause()" title="Play/Pause (Space)"><i class="fa-solid fa-play" id="playIcon"></i></button>
+                <button class="ctrl-btn" onclick="nextSong()" title="Next (→)"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="ctrl-btn" id="repeatBtn" onclick="toggleRepeat()" title="Repeat (R)"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="progress-wrap">
+                <span class="time-label" id="timeCurrent">0:00</span>
+                <div class="progress-bar-outer" id="progressBar">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                    <div class="progress-thumb" id="progressThumb"></div>
+                </div>
+                <span class="time-label" id="timeTotal">0:00</span>
+            </div>
+        </div>
+
+        <div class="player-right">
+            <button class="ctrl-btn small" onclick="toggleMute()" id="muteBtn" title="Mute (M)"><i class="fa-solid fa-volume-high" id="volIcon"></i></button>
+            <div class="volume-bar-outer" id="volumeBar"><div class="volume-bar-fill" id="volumeFill" style="width:80%"></div></div>
+            <button class="ctrl-btn small" onclick="toggleQueue()" title="Queue (Q)"><i class="fa-solid fa-list-ul"></i></button>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-item active" id="mn-home" onclick="showPage('home');setMobileNav('mn-home')">
+            <i class="fa-solid fa-house"></i><span>Home</span>
+        </button>
+        <button class="mobile-nav-item" id="mn-search" onclick="showPage('search');setMobileNav('mn-search')">
+            <i class="fa-solid fa-magnifying-glass"></i><span>Search</span>
+        </button>
+        <button class="mobile-nav-item" id="mn-library" onclick="showPage('library');renderLiked();setMobileNav('mn-library')">
+            <i class="fa-solid fa-heart"></i><span>Library</span>
+        </button>
+        <button class="mobile-nav-item" id="mn-queue" onclick="toggleQueue()">
+            <i class="fa-solid fa-list-ul"></i><span>Queue</span>
+        </button>
+    </nav>
+
+    <div class="toast hidden" id="toast"></div>
+    <audio id="audioPlayer" preload="none"></audio>
+    <script src="script.js"></script>
+</body>
+</html>

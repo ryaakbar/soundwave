@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>SoundWave — Music Player</title>
-    <meta name="description" content="Cari dan play lagu apapun gratis. Powered by Spotify.">
     <meta name="theme-color" content="#020817">
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SoundWave">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,14 +20,12 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- MARQUEE -->
     <div class="marquee-top">
         <div class="marquee-content">
             SOUNDWAVE <span class="marquee-dot">◆</span> MUSIC PLAYER <span class="marquee-dot">◆</span> SEARCH ANY SONG <span class="marquee-dot">◆</span> POWERED BY SPOTIFY <span class="marquee-dot">◆</span> FREE TO USE <span class="marquee-dot">◆</span> NO LOGIN <span class="marquee-dot">◆</span> SOUNDWAVE <span class="marquee-dot">◆</span> MUSIC PLAYER <span class="marquee-dot">◆</span> SEARCH ANY SONG <span class="marquee-dot">◆</span> POWERED BY SPOTIFY <span class="marquee-dot">◆</span>
         </div>
     </div>
 
-    <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
         <div class="brand-container">
             <div class="brand-icon-wrap"><i class="fa-solid fa-music"></i></div>
@@ -37,11 +33,11 @@
         </div>
         <div class="nav-right">
             <div class="status-pill"><div class="dot-live"></div>ONLINE</div>
-            <button class="nav-icon-btn" onclick="toggleQueue()" title="Queue (Q)"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="nav-icon-btn" onclick="toggleQueue()"><i class="fa-solid fa-list-ul"></i></button>
         </div>
     </nav>
 
-    <div class="app-layout">
+    <div class="app-layout" id="appLayout">
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-section">
@@ -61,14 +57,12 @@
         <!-- MAIN -->
         <main class="main-content" id="mainContent">
 
-            <!-- HOME PAGE -->
+            <!-- HOME -->
             <div id="page-home" class="page active">
                 <div class="page-header reveal">
                     <h1 class="page-title">Good <span id="greetTime">Morning</span> 👋</h1>
                     <p class="page-sub">Cari lagu favorit lo dan nikmatin musiknya</p>
                 </div>
-
-                <!-- SEARCH BAR -->
                 <div class="search-hero reveal delay-1">
                     <div class="search-wrap">
                         <i class="fa-solid fa-magnifying-glass search-ico"></i>
@@ -77,30 +71,19 @@
                     </div>
                     <div class="suggestions-box hidden" id="suggestionsHome"></div>
                 </div>
-
-                <!-- SKELETONS -->
                 <div id="homeSkeleton" class="song-grid hidden">
                     <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
                     <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
                     <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
                     <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
-                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
-                    <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
                 </div>
-
-                <!-- SEARCH RESULTS -->
                 <div id="homeResults" class="song-grid hidden"></div>
-
-                <!-- ERROR -->
                 <div id="homeError" class="error-state hidden">
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <p id="homeErrorText">Gagal mencari lagu</p>
                     <button onclick="doSearch('home')" class="retry-btn">Coba Lagi</button>
                 </div>
-
-                <!-- HOME CONTENT (shown when not searching) -->
                 <div id="homeDefault">
-                    <!-- Hero -->
                     <div class="hero-music-visual reveal delay-2">
                         <div class="vinyl-wrap">
                             <div class="vinyl" id="vinylDisc">
@@ -117,27 +100,20 @@
                             <div class="hero-shortcuts">
                                 <div class="shortcut-chip"><kbd>Space</kbd> Play/Pause</div>
                                 <div class="shortcut-chip"><kbd>←→</kbd> Seek</div>
-                                <div class="shortcut-chip"><kbd>↑↓</kbd> Volume</div>
                                 <div class="shortcut-chip"><kbd>M</kbd> Mute</div>
                                 <div class="shortcut-chip"><kbd>L</kbd> Like</div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- RECOMMENDED ARTISTS -->
                     <div class="section-block reveal">
                         <div class="section-header">
                             <div class="section-title">🔥 Artis Populer</div>
                         </div>
-                        <div class="artist-row" id="artistRow">
-                            <!-- rendered by JS -->
-                        </div>
+                        <div class="artist-row" id="artistRow"></div>
                     </div>
-
-                    <!-- RECOMMENDED SONGS -->
                     <div class="section-block reveal">
                         <div class="section-header">
-                            <div class="section-title">✨ Lagu yang Mungkin Lo Suka</div>
+                            <div class="section-title">✨ Rekomendasi Lagu</div>
                         </div>
                         <div id="recommendSkeleton" class="song-grid">
                             <div class="skeleton-card"><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-sub"></div></div>
@@ -150,11 +126,9 @@
                 </div>
             </div>
 
-            <!-- SEARCH PAGE -->
+            <!-- SEARCH -->
             <div id="page-search" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Search</h1>
-                </div>
+                <div class="page-header"><h1 class="page-title">Search</h1></div>
                 <div class="search-wrap">
                     <i class="fa-solid fa-magnifying-glass search-ico"></i>
                     <input type="text" id="searchInputSearch" class="search-input" placeholder="Nama lagu atau artis..." autocomplete="off">
@@ -175,21 +149,16 @@
                 </div>
             </div>
 
-            <!-- LIBRARY PAGE -->
+            <!-- LIBRARY -->
             <div id="page-library" class="page">
                 <div class="page-header">
                     <h1 class="page-title">Liked Songs ❤️</h1>
                     <p class="page-sub" id="likedCount">0 lagu</p>
                 </div>
                 <div id="likedList" class="song-list">
-                    <div class="empty-state">
-                        <i class="fa-regular fa-heart"></i>
-                        <p>Belum ada lagu yang di-like</p>
-                        <span>Tekan ❤️ waktu lagu lagi main</span>
-                    </div>
+                    <div class="empty-state"><i class="fa-regular fa-heart"></i><p>Belum ada lagu yang di-like</p><span>Tekan ❤️ waktu lagu lagi main</span></div>
                 </div>
             </div>
-
         </main>
 
         <!-- QUEUE PANEL -->
@@ -202,38 +171,35 @@
                 <div class="queue-section-label">Now Playing</div>
                 <div class="queue-empty">Belum ada lagu</div>
             </div>
-            <div id="queueNext" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+            <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
                 <div class="queue-section-label">Next Up</div>
                 <div class="queue-list" id="queueNextList"><div class="queue-empty">Queue kosong</div></div>
             </div>
         </aside>
     </div>
 
-    <!-- ===================== -->
     <!-- PLAYER BAR (hidden by default) -->
-    <!-- ===================== -->
     <div class="player-bar hidden" id="playerBar">
-        <div class="player-song-info" onclick="openNowPlaying()" style="cursor:pointer">
+        <div class="player-song-info" onclick="openNowPlaying()" style="cursor:pointer;flex:1;min-width:0;display:flex;align-items:center;gap:12px;">
             <div class="player-cover-wrap">
-                <img id="playerCover" src="" alt="cover" class="player-cover hidden">
+                <img id="playerCover" src="" alt="" class="player-cover hidden">
                 <div class="player-cover-placeholder" id="coverPlaceholder"><i class="fa-solid fa-music"></i></div>
             </div>
             <div class="player-meta">
                 <div class="player-title" id="playerTitle">—</div>
                 <div class="player-artist" id="playerArtist">—</div>
             </div>
-            <button class="like-btn" id="likeBtn" onclick="event.stopPropagation();toggleLike()" title="Like (L)">
+            <button class="like-btn" id="likeBtn" onclick="event.stopPropagation();toggleLike()">
                 <i class="fa-regular fa-heart"></i>
             </button>
         </div>
-
         <div class="player-controls-wrap">
             <div class="player-controls">
-                <button class="ctrl-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle (S)"><i class="fa-solid fa-shuffle"></i></button>
-                <button class="ctrl-btn" onclick="prevSong()" title="Prev"><i class="fa-solid fa-backward-step"></i></button>
-                <button class="ctrl-btn play-btn" id="playPauseBtn" onclick="togglePlayPause()"><i class="fa-solid fa-play" id="playIcon"></i></button>
-                <button class="ctrl-btn" onclick="nextSong()" title="Next"><i class="fa-solid fa-forward-step"></i></button>
-                <button class="ctrl-btn" id="repeatBtn" onclick="toggleRepeat()" title="Repeat (R)"><i class="fa-solid fa-repeat"></i></button>
+                <button class="ctrl-btn" id="shuffleBtn" onclick="toggleShuffle()"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="ctrl-btn play-btn" onclick="togglePlayPause()"><i class="fa-solid fa-play" id="playIcon"></i></button>
+                <button class="ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="ctrl-btn" id="repeatBtn" onclick="toggleRepeat()"><i class="fa-solid fa-repeat"></i></button>
             </div>
             <div class="progress-wrap">
                 <span class="time-label" id="timeCurrent">0:00</span>
@@ -244,16 +210,15 @@
                 <span class="time-label" id="timeTotal">0:00</span>
             </div>
         </div>
-
         <div class="player-right">
-            <button class="ctrl-btn small" onclick="toggleMute()" id="muteBtn"><i class="fa-solid fa-volume-high" id="volIcon"></i></button>
+            <button class="ctrl-btn small" onclick="toggleMute()"><i class="fa-solid fa-volume-high" id="volIcon"></i></button>
             <div class="volume-bar-outer" id="volumeBar"><div class="volume-bar-fill" id="volumeFill" style="width:80%"></div></div>
             <button class="ctrl-btn small" onclick="toggleQueue()"><i class="fa-solid fa-list-ul"></i></button>
         </div>
     </div>
 
-    <!-- MOBILE BOTTOM NAV -->
-    <nav class="mobile-nav">
+    <!-- MOBILE NAV -->
+    <nav class="mobile-nav" id="mobileNav">
         <button class="mobile-nav-item active" id="mn-home" onclick="showPage('home');setMobileNav('mn-home')">
             <i class="fa-solid fa-house"></i><span>Home</span>
         </button>
@@ -269,48 +234,100 @@
     </nav>
 
     <!-- ===================== -->
-    <!-- NOW PLAYING MODAL (like Sylva) -->
+    <!-- NOW PLAYING FULL SCREEN MODAL -->
     <!-- ===================== -->
-    <div class="np-overlay hidden" id="npOverlay" onclick="closeNowPlaying()"></div>
-    <div class="now-playing-modal hidden" id="nowPlayingModal">
-        <button class="np-close" onclick="closeNowPlaying()"><i class="fa-solid fa-chevron-down"></i></button>
+    <div class="np-modal hidden" id="npModal">
+        <!-- Dynamic blurred background from cover art -->
+        <div class="np-bg" id="npBg"></div>
+        <div class="np-bg-overlay"></div>
 
-        <div class="np-cover-wrap">
-            <img id="npCover" src="" alt="cover" class="np-cover">
-            <div class="np-cover-placeholder" id="npCoverPlaceholder"><i class="fa-solid fa-music"></i></div>
-        </div>
-
-        <div class="np-info">
-            <div class="np-title" id="npTitle">—</div>
-            <div class="np-artist" id="npArtist">—</div>
-            <button class="np-like-btn" id="npLikeBtn" onclick="toggleLike()">
-                <i class="fa-regular fa-heart"></i>
-            </button>
-        </div>
-
-        <div class="np-progress-wrap">
-            <div class="np-progress-bar" id="npProgressBar">
-                <div class="np-progress-fill" id="npProgressFill"></div>
-                <div class="np-progress-thumb" id="npProgressThumb"></div>
+        <!-- Top bar -->
+        <div class="np-topbar">
+            <button class="np-btn-icon" onclick="closeNowPlaying()"><i class="fa-solid fa-chevron-down"></i></button>
+            <div class="np-topbar-info">
+                <div class="np-topbar-label">NOW PLAYING</div>
             </div>
-            <div class="np-times">
-                <span id="npTimeCurrent">0:00</span>
-                <span id="npTimeTotal">0:00</span>
+            <button class="np-btn-icon" onclick="toggleQueue()"><i class="fa-solid fa-list-ul"></i></button>
+        </div>
+
+        <!-- SWIPE CONTAINER: slide between Cover and Lyrics -->
+        <div class="np-swipe-container" id="npSwipeContainer">
+        <div class="np-swipe-track" id="npSwipeTrack">
+            <!-- PAGE 0: Player -->
+            <div class="np-swipe-page" id="npPagePlayer">
+                <div class="np-cover-wrap">
+                    <img id="npCover" src="" alt="" class="np-cover">
+                    <div class="np-cover-placeholder" id="npCoverPlaceholder"><i class="fa-solid fa-music"></i></div>
+                </div>
+
+                <div class="np-info">
+                    <div>
+                        <div class="np-title" id="npTitle">—</div>
+                        <div class="np-artist" id="npArtist">—</div>
+                    </div>
+                    <button class="np-like-btn" id="npLikeBtn" onclick="toggleLike()">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+
+                <div class="np-progress-wrap">
+                    <div class="np-bar-outer" id="npBar">
+                        <div class="np-bar-fill" id="npBarFill"></div>
+                        <div class="np-bar-thumb" id="npBarThumb"></div>
+                    </div>
+                    <div class="np-times">
+                        <span id="npTimeCurrent">0:00</span>
+                        <span id="npTimeTotal">0:00</span>
+                    </div>
+                </div>
+
+                <div class="np-controls">
+                    <button class="np-ctrl" id="npShuffleBtn" onclick="toggleShuffle()"><i class="fa-solid fa-shuffle"></i></button>
+                    <button class="np-ctrl" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                    <button class="np-ctrl np-play" onclick="togglePlayPause()"><i class="fa-solid fa-play" id="npPlayIcon"></i></button>
+                    <button class="np-ctrl" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                    <button class="np-ctrl" id="npRepeatBtn" onclick="toggleRepeat()"><i class="fa-solid fa-repeat"></i></button>
+                </div>
+
+                <div class="np-vol-row">
+                    <i class="fa-solid fa-volume-low" style="color:rgba(255,255,255,0.4);font-size:.85rem"></i>
+                    <div class="volume-bar-outer" id="npVolBar" style="flex:1"><div class="volume-bar-fill" id="npVolFill" style="width:80%"></div></div>
+                    <i class="fa-solid fa-volume-high" style="color:rgba(255,255,255,0.4);font-size:.85rem"></i>
+                </div>
+
+                <!-- Swipe hint -->
+                <div class="np-swipe-hint" onclick="goToLyrics()">
+                    <i class="fa-solid fa-music"></i> Lirik <i class="fa-solid fa-chevron-right" style="font-size:.7rem"></i>
+                </div>
+            </div>
+
+            <!-- PAGE 1: Lyrics -->
+            <div class="np-swipe-page" id="npPageLyrics">
+                <div class="np-lyrics-header">
+                    <button class="np-btn-icon" onclick="goToPlayer()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="np-lyrics-title">Lirik</div>
+                    <div style="width:36px"></div>
+                </div>
+                <div class="np-lyrics-content" id="npLyricsContent">
+                    <div class="np-lyrics-loading" id="npLyricsLoading">
+                        <div class="loader-ring" style="width:32px;height:32px;border-width:2px;margin:0 auto 12px"></div>
+                        <div style="font-size:.8rem;color:rgba(255,255,255,0.5)">Memuat lirik...</div>
+                    </div>
+                    <div class="np-lyrics-text hidden" id="npLyricsText"></div>
+                    <div class="np-lyrics-error hidden" id="npLyricsError">
+                        <i class="fa-solid fa-music" style="font-size:2rem;opacity:.3;display:block;margin-bottom:12px"></i>
+                        Lirik tidak tersedia untuk lagu ini
+                    </div>
+                </div>
             </div>
         </div>
+        </div><!-- /np-swipe-track -->
+        </div><!-- /np-swipe-container -->
 
-        <div class="np-controls">
-            <button class="np-ctrl-btn" id="npShuffleBtn" onclick="toggleShuffle()"><i class="fa-solid fa-shuffle"></i></button>
-            <button class="np-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-            <button class="np-ctrl-btn np-play-btn" onclick="togglePlayPause()"><i class="fa-solid fa-play" id="npPlayIcon"></i></button>
-            <button class="np-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
-            <button class="np-ctrl-btn" id="npRepeatBtn" onclick="toggleRepeat()"><i class="fa-solid fa-repeat"></i></button>
-        </div>
-
-        <div class="np-volume">
-            <i class="fa-solid fa-volume-low" style="color:var(--text-muted);font-size:.85rem"></i>
-            <div class="volume-bar-outer" id="npVolumeBar" style="flex:1"><div class="volume-bar-fill" id="npVolumeFill" style="width:80%"></div></div>
-            <i class="fa-solid fa-volume-high" style="color:var(--text-muted);font-size:.85rem"></i>
+        <!-- Dot indicators -->
+        <div class="np-dots">
+            <div class="np-dot active" id="dot0" onclick="npGoTo(0)"></div>
+            <div class="np-dot" id="dot1" onclick="npGoTo(1)"></div>
         </div>
     </div>
 

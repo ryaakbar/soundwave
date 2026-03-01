@@ -490,7 +490,7 @@ body::after{
 }
 
 @media(max-width:768px){
-    :root{--sidebar-w:0px}
+    :root{--sidebar-w:0px;--player-h:96px}
     .sidebar{display:none}
     .mobile-nav{display:flex}
     .main-content{padding:20px 16px}
@@ -509,24 +509,54 @@ body::after{
 }
 
 /* =====================
-   PLAYER BAR — Swipe up hint
+   PLAYER BAR — Top bar with pill + expand button
    ===================== */
-.player-swipe-hint {
+.player-topbar {
     position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 36px;
-    height: 4px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 2px;
-    cursor: pointer;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px 0;
+    gap: 10px;
+    pointer-events: none;
 }
+.player-swipe-pill {
+    width: 36px; height: 4px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.player-expand-btn {
+    display: none; /* hidden on desktop */
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--font-main);
+    font-size: .65rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all .2s;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.player-expand-btn:hover {
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+}
+.player-expand-btn i { font-size: .6rem; }
 
 /* =====================
-   MOBILE: player bar clickable area = opens NP modal
+   MOBILE: show expand button + hide right controls
    ===================== */
 @media (max-width: 768px) {
-    .player-bar { cursor: pointer; }
+    .player-topbar { pointer-events: all; }
+    .player-expand-btn { display: flex; }
     .player-right { display: none; }
+    .player-bar { padding-top: 22px; }
 }

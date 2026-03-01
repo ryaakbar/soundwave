@@ -142,18 +142,23 @@ function updateNpLikeBtn() {
 
 // FIX 5: Swipe gestures
 function initNpSwipe() {
-    // Swipe UP on player bar to open NP modal
-    const playerBar = document.getElementById('playerBar');
-    if (playerBar) {
-        let pbStartY = 0, pbStartX = 0;
-        playerBar.addEventListener('touchstart', (e) => {
+    // Swipe UP on player bar song-info area to open NP modal
+    // (only on song-info area, not progress bar - to avoid conflict)
+    const pbSongInfo = document.getElementById('playerBar');
+    if (pbSongInfo) {
+        let pbStartY = 0, pbStartX = 0, pbStartEl = null;
+        pbSongInfo.addEventListener('touchstart', (e) => {
             pbStartY = e.touches[0].clientY;
             pbStartX = e.touches[0].clientX;
+            pbStartEl = e.target;
         }, { passive: true });
-        playerBar.addEventListener('touchend', (e) => {
+        pbSongInfo.addEventListener('touchend', (e) => {
+            // Don't intercept touches on progress bar / controls
+            const isCtrl = pbStartEl?.closest('.progress-bar-outer, .ctrl-btn, .play-btn, .like-btn, .volume-bar-outer');
+            if (isCtrl) return;
             const dy = pbStartY - e.changedTouches[0].clientY;
             const dx = Math.abs(e.changedTouches[0].clientX - pbStartX);
-            if (dy > 40 && dy > dx) openNowPlaying();
+            if (dy > 35 && dy > dx * 1.2) openNowPlaying();
         }, { passive: true });
     }
 

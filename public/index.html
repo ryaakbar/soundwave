@@ -180,9 +180,10 @@
 
     <!-- PLAYER BAR (hidden by default) -->
     <div class="player-bar hidden" id="playerBar">
-        <!-- Up arrow button: tap to open Now Playing -->
-        <button class="player-expand-btn" onclick="openNowPlaying()" aria-label="Open Now Playing">
-            <i class="fa-solid fa-chevron-up"></i>
+        <!-- Expand button: ABSOLUTE positioned, floats above bar center-top -->
+        <!-- z-index:999 ensures it's always tappable -->
+        <button class="player-expand-btn" onclick="openNowPlaying()" aria-label="Open Now Playing" type="button">
+            <i class="fa-solid fa-chevron-up"></i> Now Playing
         </button>
         <div class="player-song-info" onclick="openNowPlaying()" style="cursor:pointer;flex:1;min-width:0;display:flex;align-items:center;gap:12px;">
             <div class="player-cover-wrap">

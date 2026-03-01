@@ -19,12 +19,8 @@ export default async function handler(req, res) {
             }
         });
 
-        // Normalize berbagai struktur response
-        const data = response.data?.result
-            || response.data?.data
-            || response.data;
+        const data = response.data?.result || response.data?.data || response.data;
 
-        // Cari download_url di semua kemungkinan field
         const downloadUrl = data?.download_url
             || data?.audio_url
             || data?.url
@@ -39,25 +35,17 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
             download_url: downloadUrl,
-            title:        data?.title || "",
-            artist:       data?.artist || data?.artists || "",
-            image:        data?.image || data?.thumbnail || data?.cover || "",
-            duration:     data?.duration || ""
+            title:    data?.title || "",
+            artist:   data?.artist || data?.artists || "",
+            image:    data?.image || data?.thumbnail || data?.cover || "",
+            duration: data?.duration || ""
         });
 
     } catch (error) {
         console.error("[download] Error:", error.message);
-
-        if (error.code === "ECONNABORTED") {
-            return res.status(504).json({ error: "Download timeout. Coba lagi." });
-        }
-        if (error.response?.status === 404) {
-            return res.status(404).json({ error: "Lagu tidak ditemukan di API." });
-        }
-        if (error.response?.status === 429) {
-            return res.status(429).json({ error: "Rate limited. Tunggu sebentar." });
-        }
-
+        if (error.code === "ECONNABORTED") return res.status(504).json({ error: "Download timeout. Coba lagi." });
+        if (error.response?.status === 404) return res.status(404).json({ error: "Lagu tidak ditemukan." });
+        if (error.response?.status === 429) return res.status(429).json({ error: "Rate limited. Tunggu sebentar." });
         return res.status(500).json({ error: "Download gagal: " + (error.message || "Unknown error") });
     }
 }

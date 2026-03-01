@@ -1,58 +1,58 @@
-// download.js — Download audio via danzy API
-// Spotify tidak provide download URL (hanya preview 30s via preview_url)
-// Untuk full audio, kita tetap gunakan danzy
-
 import axios from "axios";
 
 export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    if (req.method === "OPTIONS") return res.status(200).end();
+    if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
-    const { url } = req.query;
-    if (!url?.trim()) return res.status(400).json({ error: 'URL required' });
-
-    // FIX: Kalau URL adalah Spotify track URL, convert ke format yang dibutuhkan danzy
-    const cleanUrl = url.trim();
+    const { q } = req.query;
+    if (!q || !q.trim()) return res.status(400).json({ error: "Query required" });
 
     try {
-        const response = await axios.get('https://api.danzy.web.id/api/download/spotify', {
-            params: { url: cleanUrl },
-            timeout: 35000,
+        const response = await axios.get("https://api.danzy.web.id/api/search/spotify", {
+            params: { q: q.trim() },
+            timeout: 12000,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'application/json'
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept": "application/json"
             }
         });
 
-        const data = response.data?.result || response.data?.data || response.data;
+        const raw = response.data?.result
+            || response.data?.data
+            || response.data?.results
+            || [];
 
-        const downloadUrl = data?.download_url
-            || data?.audio_url
-            || data?.url
-            || data?.link
-            || data?.mp3_url
-            || null;
-
-        if (!downloadUrl) {
-            console.error('[download] No URL in response:', JSON.stringify(response.data).slice(0, 200));
-            return res.status(502).json({ error: 'Gagal mendapatkan audio URL' });
+        if (!Array.isArray(raw) || raw.length === 0) {
+            return res.status(200).json({ results: [] });
         }
 
-        return res.status(200).json({
-            download_url: downloadUrl,
-            title:    data?.title || '',
-            artist:   data?.artist || data?.artists || '',
-            image:    data?.image || data?.thumbnail || data?.cover || '',
-            duration: data?.duration || ''
-        });
+        const results = raw.map(item => ({
+            title:     item.title || item.name || item.track_name || "Unknown",
+            artist:    item.artist || item.artists || item.artist_name || "",
+            thumbnail: item.thumbnail || item.image || item.cover || item.artwork || "",
+            track_url: item.track_url || item.url || item.spotify_url || item.link || "",
+            duration:  fmtDuration(item.duration || item.duration_ms)
+        })).filter(s => s.track_url);
+
+        return res.status(200).json({ results });
 
     } catch (error) {
-        console.error('[download] Error:', error.message);
-        if (error.code === 'ECONNABORTED') return res.status(504).json({ error: 'Download timeout. Coba lagi.' });
-        if (error.response?.status === 404) return res.status(404).json({ error: 'Lagu tidak ditemukan.' });
-        if (error.response?.status === 429) return res.status(429).json({ error: 'Rate limited. Tunggu sebentar.' });
-        return res.status(500).json({ error: 'Download gagal: ' + (error.message || 'Unknown') });
+        console.error("[search] Error:", error.message);
+        if (error.code === "ECONNABORTED") return res.status(504).json({ error: "API timeout. Coba lagi." });
+        if (error.response?.status === 429) return res.status(429).json({ error: "Rate limited. Tunggu sebentar." });
+        return res.status(500).json({ error: "Search gagal: " + (error.message || "Unknown error") });
     }
+}
+
+function fmtDuration(val) {
+    if (!val) return "";
+    if (typeof val === "string" && val.includes(":")) return val;
+    const ms = parseInt(val);
+    if (isNaN(ms)) return "";
+    const totalSec = Math.floor(ms > 10000 ? ms / 1000 : ms);
+    const m = Math.floor(totalSec / 60);
+    const s = String(totalSec % 60).padStart(2, "0");
+    return `${m}:${s}`;
 }

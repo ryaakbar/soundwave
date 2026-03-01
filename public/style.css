@@ -322,13 +322,17 @@ body::after{
 
 /* =====================
    NOW PLAYING — FULL SCREEN MODAL
-   Inspired by Sylva: white card, big cover, clean controls
+   Card style like Spotify / photo 6:
+   - Blurred cover fills the whole background
+   - White card floats in the center with cover, title, controls
+   - Swipe left → lyrics page
+   - Swipe down → close
    ===================== */
 .np-modal{
     position:fixed;inset:0;z-index:500;
     display:none;flex-direction:column;
-    /* Background: dynamic color from cover + blur */
     overflow:hidden;
+    background:transparent;
 }
 .np-modal.open{display:flex}
 
@@ -502,4 +506,27 @@ body::after{
     /* NP modal full screen on mobile */
     .np-swipe-page{padding:0 20px}
     .np-cover-wrap{width:min(260px,72vw)}
+}
+
+/* =====================
+   PLAYER BAR — Swipe up hint
+   ===================== */
+.player-swipe-hint {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+/* =====================
+   MOBILE: player bar clickable area = opens NP modal
+   ===================== */
+@media (max-width: 768px) {
+    .player-bar { cursor: pointer; }
+    .player-right { display: none; }
 }
